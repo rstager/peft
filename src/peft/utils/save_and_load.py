@@ -56,7 +56,8 @@ def get_peft_model_state_dict(model, state_dict=None, adapter_name="default"):
                 rank_pattern = {k.replace(f".{adapter_name}", ""): v for k, v in rank_pattern.items()}
                 config.rank_pattern = rank_pattern
                 to_return = model.resize_state_dict_by_rank_pattern(rank_pattern, to_return, adapter_name)
-
+    elif config.peft_type == PeftType.IA3:
+        to_return = {k: state_dict[k] for k in state_dict if "ia3_" in k}
     elif config.peft_type == PeftType.ADAPTION_PROMPT:
         to_return = {k: state_dict[k] for k in state_dict if k.split(".")[-1].startswith("adaption_")}
     elif isinstance(config, PromptLearningConfig):
@@ -115,6 +116,21 @@ def set_peft_model_state_dict(model, peft_model_state_dict, adapter_name="defaul
             rank_pattern = config.rank_pattern
             if rank_pattern is not None:
                 model.resize_modules_by_rank_pattern(rank_pattern, adapter_name)
+    elif config.peft_type == PeftType.IA3:
+        peft_model_state_dict = {}
+        for k, v in state_dict.items():
+            # RKS TODO: not sure if this is correct
+            if "ia3_" in k:
+                suffix = k.split("ia3_")[1]
+                if "." in suffix:
+                    suffix_to_replace = ".".join(suffix.split(".")[1:])
+                    k = k.replace(suffix_to_replace, f"{adapter_name}.{suffix_to_replace}")
+                else:
+                    k = f"{k}.{adapter_name}"
+                peft_model_state_dict[k] = v
+            else:
+                peft_model_state_dict[k] = v
+
     elif isinstance(config, PromptLearningConfig) or config.peft_type == PeftType.ADAPTION_PROMPT:
         peft_model_state_dict = state_dict
     else:

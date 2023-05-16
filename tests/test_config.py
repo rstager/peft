@@ -16,12 +16,13 @@ import os
 import tempfile
 import unittest
 
-from peft import AdaptionPromptConfig, LoraConfig, PrefixTuningConfig, PromptEncoderConfig, PromptTuningConfig
+from peft import AdaptionPromptConfig, LoraConfig, IA3Config, PrefixTuningConfig, PromptEncoderConfig, PromptTuningConfig
 
 
 class PeftConfigTestMixin:
     all_config_classes = (
         LoraConfig,
+        IA3Config,
         PromptEncoderConfig,
         PrefixTuningConfig,
         PromptTuningConfig,

@@ -203,6 +203,10 @@ TRANSFORMERS_MODELS_TO_LORA_TARGET_MODULES_MAPPING = {
     "chatglm": ["query_key_value"],
 }
 
+TRANSFORMERS_MODELS_TO_IA3_TARGET_MODULES_MAPPING = {
+    "gpt2": ["c_attn","c_fc"],
+}
+
 TRANSFORMERS_MODELS_TO_ADALORA_TARGET_MODULES_MAPPING = {
     "t5": ["q", "k", "v", "o", "wi", "wo"],
     "mt5": ["q", "k", "v", "o", "wi_0", "wi_1", "wo"],
